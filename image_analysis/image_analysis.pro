@@ -19,3 +19,34 @@ QML_DESIGNER_IMPORT_PATH =
 qnx: target.path = /tmp/$${TARGET}/bin
 else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
+win32{
+    INCLUDEPATH +=src\
+                $$PWD\third-party\opencv_4.4.0\include\
+
+
+    Debug{
+        LIBS += \
+             $$PWD/third-party/opencv_4.4.0/libopencv_core440.dll \
+             $$PWD/third-party/opencv_4.4.0/libopencv_highgui440.dll \
+             $$PWD/third-party/opencv_4.4.0/libopencv_imgcodecs440.dll \
+             $$PWD/third-party/opencv_4.4.0/libopencv_imgproc440.dll \
+             $$PWD/third-party/opencv_4.4.0/libopencv_features2d440.dll \
+             $$PWD/third-party/opencv_4.4.0/libopencv_calib3d440.dll \
+             $$PWD/third-party/opencv_4.4.0/libopencv_videoio440.dll \
+             $$PWD/third-party/opencv_4.4.0/libopencv_video440.dll \
+             $$PWD/third-party/opencv_4.4.0/opencv_videoio_ffmpeg440.dll
+    }
+    Release{
+
+        LIBS += \
+             $$PWD/third-party/opencv_4.4.0/libopencv_core440.dll \
+             $$PWD/third-party/opencv_4.4.0/libopencv_highgui440.dll \
+             $$PWD/third-party/opencv_4.4.0/libopencv_imgcodecs440.dll \
+             $$PWD/third-party/opencv_4.4.0/libopencv_imgproc440.dll \
+             $$PWD/third-party/opencv_4.4.0/libopencv_features2d440.dll \
+             $$PWD/third-party/opencv_4.4.0/libopencv_calib3d440.dll \
+             $$PWD/third-party/opencv_4.4.0/libopencv_videoio440.dll \
+             $$PWD/third-party/opencv_4.4.0/libopencv_video440.dll \
+             $$PWD/third-party/opencv_4.4.0/opencv_videoio_ffmpeg440.dll
+    }
+}

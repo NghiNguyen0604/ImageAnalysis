@@ -1,5 +1,34 @@
 <RCC>
     <qresource prefix="/">
         <file>main.qml</file>
+        <file>resources/fullScreen.png</file>
+        <file>resources/fullScreenReverse.png</file>
+        <file>resources/gear.png</file>
+        <file>resources/gimbal_1.png</file>
+        <file>resources/gimbal_2.png</file>
+        <file>resources/information.png</file>
+        <file>resources/information_1.png</file>
+        <file>resources/information_2.png</file>
+        <file>resources/Logo.png</file>
+        <file>resources/module_1.png</file>
+        <file>resources/module_2.png</file>
+        <file>resources/pause.png</file>
+        <file>resources/photo-camera.png</file>
+        <file>resources/play.png</file>
+        <file>resources/t3p_1.png</file>
+        <file>resources/t3p_2.png</file>
+        <file>resources/user.png</file>
+        <file>qml/Box.qml</file>
+        <file>qml/Button_bar.qml</file>
+        <file>qml/Button_video.qml</file>
+        <file>qml/Button_workspace.qml</file>
+        <file>qml/DisplayImages.qml</file>
+        <file>qml/M_Progress_Bar.qml</file>
+        <file>qml/Message_dialog.qml</file>
+        <file>qml/User_area.qml</file>
+        <file>qml/Work_space_info.qml</file>
+        <file>qml/Work_space_BlurAnalysis.qml</file>
+        <file>resources/image-gallery.png</file>
+        <file>qml/CustomImageButton.qml</file>
     </qresource>
 </RCC>
