@@ -5,7 +5,8 @@ QT += quick
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 SOURCES += \
-        main.cpp
+        main.cpp \
+        src/imageprovider.cpp
 
 RESOURCES += qml.qrc
 
@@ -50,3 +51,6 @@ win32{
              $$PWD/third-party/opencv_4.4.0/opencv_videoio_ffmpeg440.dll
     }
 }
+
+HEADERS += \
+    src/imageprovider.h

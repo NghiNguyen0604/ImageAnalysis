@@ -1,12 +1,11 @@
 #include <QGuiApplication>
 #include <QQmlApplicationEngine>
+#include <QQmlContext>
 #include <iostream>
-#include <opencv2/opencv.hpp>
-#include <opencv2/imgproc.hpp>
-#include <opencv2/highgui.hpp>
+#include <QIcon>
+#include "imageprovider.h"
 
 using namespace std;
-using namespace cv;
 
 int main(int argc, char *argv[])
 {
@@ -26,6 +25,9 @@ int main(int argc, char *argv[])
     QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
 #endif
     QGuiApplication app(argc, argv);
+    app.setWindowIcon(QIcon(":/resources/Logo.png"));
+    app.setOrganizationName("Gremsy");
+    app.setOrganizationDomain("www.gremsy.com");
 
     QQmlApplicationEngine engine;
     const QUrl url(QStringLiteral("qrc:/main.qml"));
@@ -34,7 +36,9 @@ int main(int argc, char *argv[])
         if (!obj && url == objUrl)
             QCoreApplication::exit(-1);
     }, Qt::QueuedConnection);
+    ImageProvider *imageProvider = new ImageProvider();
+   engine.rootContext()->setContextProperty("imageProvider",imageProvider);
+   engine.addImageProvider("live",imageProvider);
     engine.load(url);
-
     return app.exec();
 }
