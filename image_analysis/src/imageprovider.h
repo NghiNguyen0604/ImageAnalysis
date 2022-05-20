@@ -15,16 +15,22 @@ class ImageProvider : public QObject, public QQuickImageProvider
 public:
     ImageProvider(QObject *parent= nullptr);
     QImage requestImage(const QString &id,QSize *size,const QSize &requestedSize) override;
-    void updateImage(QImage &input,const QImage &image);
-    Q_INVOKABLE void test();
-    Q_INVOKABLE void test1();
-    Q_INVOKABLE void reset();
+//    void updateImage(QImage &input,const QImage &image);
+    Q_INVOKABLE void setImagePath(QString path);
+
+private slots:
+    void _processImage();
+
+
 signals:
+    void selectedImagePath(QString path);
     void imageRawChanged();
     void imageFilteredChanged();
 
 private:
-    void init();
+    void updateImage(QImage &input,const QImage &image);
+    void reset();
+    QString _image_path;
     QImage imageRaw;
     QImage imageFiltered;
 };

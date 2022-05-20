@@ -11,29 +11,27 @@ Item{
     property var model_list_changed: []
     property string _image_path: ""
 
-    //    FileDialog {
-    //        id:image_filedialog
-    //        title: "Images"
-    //        folder: shortcuts.home
-    //        selectExisting: true
-    ////        selectMultiple:true
-    ////        onSelectMultipleChanged: {}
-    //        nameFilters: ["MP4 files (*.mp4)","AVI file (*.avi)","MTS file (*.mts)"]
-    //        onAccepted: {
+        FileDialog {
+            id:image_filedialog
+            title: "Images"
+            folder: shortcuts.home
+            selectExisting: true
+    //        selectMultiple:true
+    //        onSelectMultipleChanged: {}
+            nameFilters: ["JPG file (*.jpg)","JPEG file (*.jpeg)","PNG file (*.png)"]
+            onAccepted: {
 
-    //            _image_path =image_filedialog.fileUrl.toString();
-    //            _image_path=_video_path.replace(/^(file:\/{3})/,"");
-    //            _image_path=decodeURIComponent(_image_path);
+                _image_path =image_filedialog.fileUrl.toString();
+                _image_path=_image_path.replace(/^(file:\/{3})/,"");
+                _image_path=decodeURIComponent(_image_path);
+                console.log(_image_path)
+                imageProvider.setImagePath(_image_path)
 
-    //            out_string=_image_path
-
-    //            m_video_path=_image_path
-    ////            console.log(m_video_path)
-    //        }
-    //        onRejected: {
-    //            _image_path= ""
-    //        }
-    //    }
+            }
+            onRejected: {
+                _image_path= ""
+            }
+        }
     Column{
         anchors.fill: parent
         Item{
@@ -49,7 +47,7 @@ Item{
                 anchors.fill:parent
                 Rectangle{
                     color: "#3B3A3A"
-                    width: parent.width*0.55
+                    width: parent.width*0.85
                     height: parent.height
                 }
 
@@ -63,7 +61,7 @@ Item{
                     img_height: 0
                     item_height: height
                     item_width: width
-                    object_name: "Images"
+                    object_name: "Image"
                     txt_tooltip: "Select file path."
                     onUser_press: {
                         text_scale=0.8
@@ -72,54 +70,11 @@ Item{
                         text_scale=1
                     }
                     onUser_clicked: {
-                        imageProvider.test()
-                        //                        image_filedialog.open()
+//                        imageProvider.test()
+                                                image_filedialog.open()
                     }
                 }
-                Button_workspace{
-                    enabled: true
-                    height: parent.height
-                    width: parent.width *0.15
-                    img_src: ""
-                    img_width: 0
-                    img_height: 0
-                    item_height: height
-                    item_width: width
-                    object_name: "Images"
-                    txt_tooltip: "Select file path."
-                    onUser_press: {
-                        text_scale=0.8
-                    }
-                    onUser_released: {
-                        text_scale=1
-                    }
-                    onUser_clicked: {
-                        imageProvider.test1()
-                        //                        image_filedialog.open()
-                    }
-                }
-                Button_workspace{
-                    enabled: true
-                    height: parent.height
-                    width: parent.width *0.15
-                    img_src: ""
-                    img_width: 0
-                    img_height: 0
-                    item_height: height
-                    item_width: width
-                    object_name: "Images"
-                    txt_tooltip: "Select file path."
-                    onUser_press: {
-                        text_scale=0.8
-                    }
-                    onUser_released: {
-                        text_scale=1
-                    }
-                    onUser_clicked: {
-                        imageProvider.reset()
-                        //                        image_filedialog.open()
-                    }
-                }
+
             }
 
         }
