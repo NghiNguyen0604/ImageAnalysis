@@ -2,6 +2,7 @@ import QtQuick 2.0
 import QtQuick.Controls 2.15
 Item {
     property int click_current_index_: -1
+    property double sharpness_:0
 
     onClick_current_index_Changed: {
 
@@ -162,10 +163,18 @@ Item {
                                             id:pn_note
                                             height: parent.height*0.05
                                             width: parent.width
+                                            Row{
+                                            anchors.fill:parent
                                             Text {
-                                                id: txt_not
-                                                text: qsTr("DEMO")
+
+                                                text: qsTr("Variance: ")
                                                 color: "#e8e8e8"
+                                            }
+                                            Text {
+
+                                                text: sharpness_
+                                                color: "#ffffff"
+                                            }
                                             }
                                         }
                                     }
@@ -210,7 +219,15 @@ Item {
     Component.onCompleted:{
         click_current_index_=1
     }
+    Connections{
+        target:imageProvider
+        ignoreUnknownSignals: true
 
+        function onResultWithLaplaceOperatorHandler(sharpness){
+            sharpness_=sharpness
+        }
+
+    }
 
 
 }

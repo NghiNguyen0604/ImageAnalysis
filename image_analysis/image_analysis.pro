@@ -6,7 +6,8 @@ QT += quick
 
 SOURCES += \
         main.cpp \
-        src/imageprovider.cpp
+        src/imageprovider.cpp \
+        src/process_image.cpp
 
 RESOURCES += qml.qrc
 
@@ -53,4 +54,5 @@ win32{
 }
 
 HEADERS += \
-    src/imageprovider.h
+    src/imageprovider.h \
+    src/process_image.h

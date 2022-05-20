@@ -71,6 +71,7 @@ Item{
                     }
                     onUser_clicked: {
 //                        imageProvider.test()
+
                                                 image_filedialog.open()
                     }
                 }
@@ -274,21 +275,4 @@ Item{
         ignoreUnknownSignals: true
 
     }
-    //    Connections{
-    //        target:video_analysis
-    //        ignoreUnknownSignals: true
-    //        function onWorkerResult(dx,dy,da, percent, currframe){
-
-    //            if(percent===100){
-    //                progress.mode_change_wait()
-    //                unable_button_in_process=true
-    //            }else if ((percent>0)&&(percent<100)){
-    //                progress.mode_change_progress()
-    //                progress.m_value=percent
-    //            }
-    //            buf_vertical.push(currframe)
-    //            var data_buf = [dx,dy,da, percent, currframe]
-    //            data_buffer.push(data_buf)
-    //        }
-    //    }
 }
