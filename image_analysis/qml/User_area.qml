@@ -223,7 +223,7 @@ Item {
         target:imageProvider
         ignoreUnknownSignals: true
 
-        function onResultWithLaplaceOperatorHandler(sharpness){
+        function onResultWithLaplaceOperator(sharpness){
             sharpness_=sharpness
         }
 
