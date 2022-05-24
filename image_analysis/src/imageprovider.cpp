@@ -219,23 +219,15 @@ double ImageProvider::processImageWithFFT(Mat grayImage)
     invFFT = cv::abs(invFFT);
     cv::minMaxLoc(invFFT,&minVal,&maxVal,NULL,NULL);
 
-    //check for impossible values
-    if(maxVal<=0.0){
-        qDebug() << "No information, complete black image!\n";
-        return 0;
-
-    }else {
-        cv::log(invFFT,logFFT);
-        logFFT *= 20;
-        //result = numpy.mean(img_fft)
-        cv::Scalar mean, stddev; // 0:1st channel, 1:2nd channel and 2:3rd channel
-        cv::meanStdDev(logFFT, mean, stddev, Mat());
-        double variance = stddev.val[0] * stddev.val[0];
-        ///converting back to CV_8U
-        convertScaleAbs(logFFT, logFFT);
-        this->updateImage(fftImage,QImage((uchar*)logFFT.data,logFFT.cols,logFFT.rows,logFFT.step,QImage::Format_Grayscale8));
-
-        emit fftImageChanged();
-        return roundf(variance*10000)/10000;
-    }
+//    cv::log(invFFT,logFFT);
+//    logFFT *= 20;
+    //result = numpy.mean(img_fft)
+    cv::Scalar mean, stddev; // 0:1st channel, 1:2nd channel and 2:3rd channel
+    cv::meanStdDev(invFFT, mean, stddev, Mat());
+    double variance = stddev.val[0] * stddev.val[0];
+    ///converting back to CV_8U
+    convertScaleAbs(invFFT, invFFT);
+    this->updateImage(fftImage,QImage((uchar*)invFFT.data,invFFT.cols,invFFT.rows,invFFT.step,QImage::Format_Grayscale8));
+    emit fftImageChanged();
+    return roundf(variance*10000)/10000;
 }

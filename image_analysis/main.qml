@@ -127,7 +127,7 @@ ApplicationWindow {
                     height: parent.height
                     Column{
                         id:workspace
-                        width: parent.width*0.65
+                        width: parent.width*0.8
                         height: parent.height
                         Item{
                             height: parent.height * 0.975

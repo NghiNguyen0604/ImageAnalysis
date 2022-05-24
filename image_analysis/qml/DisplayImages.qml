@@ -14,7 +14,7 @@ Item {
         Image{
             id:imageRaw
             height:parent.height
-            width: parent.width*0.33
+            width: parent.width*0.3
             source:sourceRaw
             cache:false
             function reload(){
@@ -23,10 +23,15 @@ Item {
             }
 
         }
+        Rectangle{
+            width: parent.width*0.05
+            height: parent.height
+            color: "#3B3A3A"
+        }
         Image{
             id:laplaceImage
             height:parent.height
-            width: parent.width*0.33
+            width: parent.width*0.3
             source:sourceLaplaceImage
             cache:false
             function reload(){
@@ -35,10 +40,15 @@ Item {
             }
 
         }
+        Rectangle{
+            width: parent.width*0.05
+            height: parent.height
+            color: "#3B3A3A"
+        }
         Image{
             id:fftImage
             height:parent.height
-            width: parent.width*0.33
+            width: parent.width*0.3
             source:sourceFFTImage
             cache:false
             function reload(){
