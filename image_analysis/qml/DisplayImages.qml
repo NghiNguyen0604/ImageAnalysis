@@ -6,14 +6,15 @@ import QtMultimedia 5.15
 
 Item {
     property string sourceRaw:"image://live/raw"
-    property string sourceFiltered:"image://live/filtered"
+    property  string sourceLaplaceImage: "image://live/laplace"
+    property string sourceFFTImage:"image://live/fft"
 
     Row{
         anchors.fill: parent
         Image{
             id:imageRaw
             height:parent.height
-            width: parent.width*0.5
+            width: parent.width*0.33
             source:sourceRaw
             cache:false
             function reload(){
@@ -23,14 +24,26 @@ Item {
 
         }
         Image{
-            id:imageFiltered
+            id:laplaceImage
             height:parent.height
-            width: parent.width*0.5
-            source:sourceFiltered
+            width: parent.width*0.33
+            source:sourceLaplaceImage
             cache:false
             function reload(){
-                sourceFiltered=""
-                sourceFiltered="image://live/filtered"
+                sourceLaplaceImage=""
+                sourceLaplaceImage="image://live/laplace"
+            }
+
+        }
+        Image{
+            id:fftImage
+            height:parent.height
+            width: parent.width*0.33
+            source:sourceFFTImage
+            cache:false
+            function reload(){
+                sourceFFTImage=""
+                sourceFFTImage="image://live/fft"
             }
 
         }
@@ -44,13 +57,16 @@ Item {
     Connections{
         target:imageProvider
         ignoreUnknownSignals: true
-        function onImageRawChanged(){
+        function onRawImageChanged(){
             imageRaw.reload()
 
         }
-        function onImageFilteredChanged(){
-           imageFiltered.reload()
-
+        function onLaplaceImageChanged(){
+            laplaceImage.reload()
+        }
+        function onFftImageChanged(){
+            fftImage.reload()
+            console.log("Updated fft image.")
         }
     }
 

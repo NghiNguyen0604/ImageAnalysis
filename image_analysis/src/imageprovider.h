@@ -32,21 +32,22 @@ signals:
     ///This function reserved for multithreading
     void readyToProcessInOtherThread(QString path);
     void selectedImagePath(QString path);
-    void imageRawChanged();
-    void imageFilteredChanged();
-    void resultWithLaplaceOperator(double sharpness);
+    void rawImageChanged();
+    void laplaceImageChanged();
+    void fftImageChanged();
+    void resultProcess(double laplaceFilterResult,double fftFilterResult);
 
 private:
 
-    void updateImage(QImage &input, QImage image);
-    void processImageWithLaplace(cv::Mat grayImage);
-    void processImageWithFFT(cv::Mat grayImage);
+    void updateImage(QImage &input,const QImage &image);
+    double processImageWithLaplace(cv::Mat grayImage);
+    double processImageWithFFT(cv::Mat grayImage);
 
     void reset();
     ProcessImage *processImage= new ProcessImage();
     QString _image_path;
-    QImage imageRaw;
-    QImage imageFiltered;
+    QImage rawImage,laplaceImage,fftImage,testImage;
+
     QMutex mutex;
 };
 

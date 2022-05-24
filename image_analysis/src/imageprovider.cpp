@@ -3,11 +3,12 @@
 ImageProvider::ImageProvider(QObject *parent): QObject(parent), QQuickImageProvider(QQuickImageProvider::Image)
 {
     //    processImage-> moveToThread(&processImageThread);
-    imageRaw = QImage(200,200,QImage::Format_RGB32);
-    imageRaw.fill(QColor("black"));
-    imageFiltered = QImage(200,200,QImage::Format_RGB32);
-    imageFiltered.fill(QColor("black"));
-
+    rawImage = QImage(200,200,QImage::Format_RGB32);
+    rawImage.fill(QColor(59,58,58));
+    laplaceImage = QImage(200,200,QImage::Format_RGB32);
+    laplaceImage.fill(QColor(59,58,58));
+    fftImage = QImage(200,200,QImage::Format_RGB32);
+    fftImage.fill(QColor(59,58,58));
     ///Processed afther selected image path.
     connect(this,&ImageProvider::selectedImagePath,this,&ImageProvider::_processImage);
     ///This function reserved for multithreading handle feedback from thread
@@ -31,17 +32,34 @@ ImageProvider::~ImageProvider()
 
 QImage ImageProvider::requestImage(const QString &id, QSize *size, const QSize &requestedSize)
 {
-    qDebug() <<id;
+    qDebug() <<"Image ID:"<<id;
 
 
     if(id=="raw"){
         if(size){
-            *size=imageRaw.size();
+            *size=rawImage.size();
         }
         if(requestedSize.width()>0 && requestedSize.height()>0){
-            imageRaw= imageRaw.scaled(requestedSize.width(),requestedSize.height(),Qt::KeepAspectRatio);
+            rawImage= rawImage.scaled(requestedSize.width(),requestedSize.height(),Qt::KeepAspectRatio);
         }
-        return imageRaw;
+        return rawImage;
+    }
+    else if(id=="laplace"){
+
+        if(size == nullptr){
+            qDebug()<< "Image null";
+        }
+        if(size){
+            *size=laplaceImage.size();
+        }
+        if(requestedSize.width()>0 && requestedSize.height()>0){
+            qDebug()<< "Image prepare to scale:";
+
+            laplaceImage= laplaceImage.scaled(requestedSize.width(),requestedSize.height(),Qt::KeepAspectRatio);
+            qDebug()<< "Image width scaled:"<<requestedSize.width();
+
+        }
+        return laplaceImage;
     }
     else{
 
@@ -49,22 +67,21 @@ QImage ImageProvider::requestImage(const QString &id, QSize *size, const QSize &
             qDebug()<< "Image null";
         }
         if(size){
-            *size=imageFiltered.size();
+            *size=fftImage.size();
         }
         if(requestedSize.width()>0 && requestedSize.height()>0){
             qDebug()<< "Image prepare to scale:";
 
-            imageFiltered= imageFiltered.scaled(requestedSize.width(),requestedSize.height(),Qt::KeepAspectRatio);
+            fftImage= fftImage.scaled(requestedSize.width(),requestedSize.height(),Qt::KeepAspectRatio);
             qDebug()<< "Image width scaled:"<<requestedSize.width();
 
         }
-        return imageFiltered;
+        return fftImage;
     }
-
 
 }
 
-void ImageProvider::updateImage(  QImage &input, QImage image)
+void ImageProvider::updateImage(  QImage &input,const QImage& image)
 {
     if(input.isNull()){
         qDebug()<< "Input null";
@@ -73,14 +90,12 @@ void ImageProvider::updateImage(  QImage &input, QImage image)
     if(!image.isNull()&&input != image){
         input=image;
     }
-    qDebug()<<"Updated image";
-
 }
 void ImageProvider::setImagePath(QString path){
     reset();
     if(path =="") return;
     _image_path=path;
-    emit resultWithLaplaceOperator(0);
+    emit resultProcess(0,0);
 
     emit selectedImagePath(_image_path);
 
@@ -92,12 +107,12 @@ void ImageProvider::imageWithLaplaceOperatorHandler(QImage image, double sharpne
 }
 
 void ImageProvider:: reset(){
-    imageRaw = QImage(200,200,QImage::Format_RGB32);
-    imageRaw.fill(QColor("black"));
-    imageFiltered = QImage(200,200,QImage::Format_RGB32);
-    imageFiltered.fill(QColor("black"));
-    emit imageRawChanged();
-    emit imageFilteredChanged();
+    rawImage = QImage(200,200,QImage::Format_RGB32);
+    rawImage.fill(QColor("black"));
+    laplaceImage = QImage(200,200,QImage::Format_RGB32);
+    laplaceImage.fill(QColor("black"));
+    emit rawImageChanged();
+    emit laplaceImageChanged();
 }
 
 void ImageProvider::_processImage()
@@ -107,15 +122,18 @@ void ImageProvider::_processImage()
     //convert image to gray.
     cv::cvtColor(mat,grayImage,cv::COLOR_BGR2GRAY);
     //update raw image to displaying in UI
-    updateImage(imageRaw,QImage((uchar*) mat.data, mat.cols, mat.rows, mat.step, QImage::Format_RGB888).rgbSwapped());
-    emit imageRawChanged();
+    this->updateImage(rawImage,QImage((uchar*) mat.data, mat.cols, mat.rows, mat.step, QImage::Format_RGB888).rgbSwapped());
+    emit rawImageChanged();
     //processing image with laplace
-    processImageWithLaplace(grayImage.clone());
+    double _laplaceFilterResult=  this->processImageWithLaplace(grayImage.clone());
+
     //processing image with fft
 
-    processImageWithFFT(grayImage.clone());
+   double _fftFilterResult= this->processImageWithFFT(grayImage.clone());
+//   qDebug()<< "Result" << _laplaceFilterResult<< _fftFilterResult;
+   emit resultProcess(_laplaceFilterResult,_fftFilterResult);
 }
-void ImageProvider::processImageWithLaplace(cv::Mat grayImage)
+double ImageProvider::processImageWithLaplace(cv::Mat grayImage)
 {
     Mat laplacianImage;
     /// The kernel size of the laplace operator.
@@ -132,16 +150,16 @@ void ImageProvider::processImageWithLaplace(cv::Mat grayImage)
     cv::meanStdDev(laplacianImage, mean, stddev, Mat());
 
     double variance = stddev.val[0] * stddev.val[0];
-    qDebug()<< "Variance:"<<variance;
+//    qDebug()<< "Variance:"<<variance;
     ///converting back to CV_8U
     convertScaleAbs(laplacianImage, laplacianImage);
     ///update filtered image to displaying in UI
-    updateImage(imageFiltered,QImage((uchar*) laplacianImage.data, laplacianImage.cols, laplacianImage.rows, laplacianImage.step,QImage::Format_Grayscale8));
-    emit resultWithLaplaceOperator(roundf(variance*10000)/10000);
-    emit imageFilteredChanged();
+    this->updateImage(laplaceImage,QImage((uchar*) laplacianImage.data, laplacianImage.cols, laplacianImage.rows, laplacianImage.step,QImage::Format_Grayscale8));
+    emit laplaceImageChanged();
+    return roundf(variance*10000)/10000;
 }
 
-void ImageProvider::processImageWithFFT(Mat grayImage)
+double ImageProvider::processImageWithFFT(Mat grayImage)
 {
     const char BLOCK = 60;
     int cx = grayImage.cols/2;
@@ -176,7 +194,6 @@ void ImageProvider::processImageWithFFT(Mat grayImage)
     //shuffle the quadrants to their original position
     Mat orgFFT;
     fourierTransform.copyTo(orgFFT);
-    return;
 
     Mat p0(orgFFT, Rect(0, 0, cx, cy));       // Top-Left - Create a ROI per quadrant
     Mat p1(orgFFT, Rect(cx, 0, cx, cy));      // Top-Right
@@ -205,17 +222,20 @@ void ImageProvider::processImageWithFFT(Mat grayImage)
     //check for impossible values
     if(maxVal<=0.0){
         qDebug() << "No information, complete black image!\n";
+        return 0;
 
+    }else {
+        cv::log(invFFT,logFFT);
+        logFFT *= 20;
+        //result = numpy.mean(img_fft)
+        cv::Scalar mean, stddev; // 0:1st channel, 1:2nd channel and 2:3rd channel
+        cv::meanStdDev(logFFT, mean, stddev, Mat());
+        double variance = stddev.val[0] * stddev.val[0];
+        ///converting back to CV_8U
+        convertScaleAbs(logFFT, logFFT);
+        this->updateImage(fftImage,QImage((uchar*)logFFT.data,logFFT.cols,logFFT.rows,logFFT.step,QImage::Format_Grayscale8));
+
+        emit fftImageChanged();
+        return roundf(variance*10000)/10000;
     }
-
-    cv::log(invFFT,logFFT);
-    logFFT *= 20;
-
-    //result = numpy.mean(img_fft)
-    cv::Scalar result= cv::mean(logFFT);
-    qDebug() << "Result : "<< result.val[0];
-
-    // show if you like
-    Mat finalImage;
-    logFFT.convertTo(finalImage, CV_8U);    // Back to 8-bits
 }

@@ -35,11 +35,6 @@ Item{
     Column{
         anchors.fill: parent
         Item{
-            id:pn_title
-            width: parent.width
-            height: parent.height*0.075
-        }
-        Item{
             id:pn_info_gimbal
             width:parent.width
             height: parent.height*0.075
@@ -248,18 +243,16 @@ Item{
         Item{
             id:pn_video
             width: parent.width
-            height: parent.height*0.75
+            height: parent.height*0.9
             DisplayImages{
                 anchors.fill: parent
-                sourceRaw:"image://live/raw"
-                sourceFiltered:"image://live/filtered"
             }
 
         }
         Item{
             id:pn_path_video_file
             width: parent.width
-            height: parent.height*0.25
+            height: parent.height*0.025
             Text {
                 id: txt_file_path
                 anchors.fill: parent
