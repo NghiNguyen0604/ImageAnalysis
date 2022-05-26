@@ -1,7 +1,14 @@
+#include <windows.h>
 #include "imageprovider.h"
 #include <QDebug>
+#include <QFileInfo>
+#include <QFile>
+#include <iostream>
+#include <fstream>
+#include <QProcess>
 ImageProvider::ImageProvider(QObject *parent): QObject(parent), QQuickImageProvider(QQuickImageProvider::Image)
 {
+
     //    processImage-> moveToThread(&processImageThread);
     rawImage = QImage(200,200,QImage::Format_RGB32);
     rawImage.fill(QColor(59,58,58));
@@ -44,39 +51,44 @@ QImage ImageProvider::requestImage(const QString &id, QSize *size, const QSize &
         }
         return rawImage;
     }
-    else if(id=="laplace"){
+//    else if(id=="laplace"){
 
-        if(size == nullptr){
-            qDebug()<< "Image null";
-        }
-        if(size){
-            *size=laplaceImage.size();
-        }
-        if(requestedSize.width()>0 && requestedSize.height()>0){
-            qDebug()<< "Image prepare to scale:";
+//        if(size == nullptr){
+//            qDebug()<< "Image null";
+//        }
+//        if(size){
+//            *size=laplaceImage.size();
+//        }
+//        if(requestedSize.width()>0 && requestedSize.height()>0){
+//            qDebug()<< "Image prepare to scale:";
 
-            laplaceImage= laplaceImage.scaled(requestedSize.width(),requestedSize.height(),Qt::KeepAspectRatio);
-            qDebug()<< "Image width scaled:"<<requestedSize.width();
+//            laplaceImage= laplaceImage.scaled(requestedSize.width(),requestedSize.height(),Qt::KeepAspectRatio);
+//            qDebug()<< "Image width scaled:"<<requestedSize.width();
 
-        }
-        return laplaceImage;
-    }
+//        }
+//        return laplaceImage;
+//    }
+//    else{
+
+//        if(size == nullptr){
+//            qDebug()<< "Image null";
+//        }
+//        if(size){
+//            *size=fftImage.size();
+//        }
+//        if(requestedSize.width()>0 && requestedSize.height()>0){
+//            qDebug()<< "Image prepare to scale:";
+
+//            fftImage= fftImage.scaled(requestedSize.width(),requestedSize.height(),Qt::KeepAspectRatio);
+//            qDebug()<< "Image width scaled:"<<requestedSize.width();
+
+//        }
+//        return fftImage;
+//    }
     else{
-
-        if(size == nullptr){
-            qDebug()<< "Image null";
-        }
-        if(size){
-            *size=fftImage.size();
-        }
-        if(requestedSize.width()>0 && requestedSize.height()>0){
-            qDebug()<< "Image prepare to scale:";
-
-            fftImage= fftImage.scaled(requestedSize.width(),requestedSize.height(),Qt::KeepAspectRatio);
-            qDebug()<< "Image width scaled:"<<requestedSize.width();
-
-        }
-        return fftImage;
+        QImage defaultImage= QImage(200,200,QImage::Format_RGB32);
+        defaultImage.fill(QColor(58,59,58));
+        return defaultImage;
     }
 
 }
@@ -113,6 +125,25 @@ void ImageProvider:: reset(){
     laplaceImage.fill(QColor("black"));
     emit rawImageChanged();
     emit laplaceImageChanged();
+}
+
+void ImageProvider::saveImage(QString &imageName, Mat &imageData)
+{
+    //create results folder to save images if the folder dont exist.
+    this->pwd.mkdir("results");
+
+    qDebug()<< "Working director:"<<pwd;
+
+    QString imagePath= this->pwd.absolutePath() + "/results/"+imageName+".jpg";
+
+    //write image data to file.
+    cv::imwrite(imagePath.toStdString(),imageData);
+
+    // get directory contains file.
+    QDir::setCurrent(pwd.absolutePath() + "/results/");
+
+    // open this image.
+    system((imageName+".jpg").toStdString().c_str());
 }
 
 void ImageProvider::_processImage()
@@ -154,13 +185,16 @@ double ImageProvider::processImageWithLaplace(cv::Mat grayImage)
     ///converting back to CV_8U
     convertScaleAbs(laplacianImage, laplacianImage);
     ///update filtered image to displaying in UI
-    this->updateImage(laplaceImage,QImage((uchar*) laplacianImage.data, laplacianImage.cols, laplacianImage.rows, laplacianImage.step,QImage::Format_Grayscale8));
-    emit laplaceImageChanged();
+//    this->updateImage(laplaceImage,QImage((uchar*) laplacianImage.data, laplacianImage.cols, laplacianImage.rows, laplacianImage.step,QImage::Format_Grayscale8));
+//    emit laplaceImageChanged();
+    QString imageName= QFileInfo(_image_path).baseName()+"_laplace";
+    this -> saveImage(imageName,laplacianImage);
     return roundf(variance*10000)/10000;
 }
 
 double ImageProvider::processImageWithFFT(Mat grayImage)
 {
+
     const char BLOCK = 60;
     int cx = grayImage.cols/2;
     int cy = grayImage.rows/2;
@@ -211,13 +245,11 @@ double ImageProvider::processImageWithFFT(Mat grayImage)
     // IFFT
     Mat invFFT;
     Mat logFFT;
-    double minVal,maxVal;
 
     dft(orgFFT, invFFT, DFT_INVERSE|DFT_REAL_OUTPUT);
 
     //img_fft = 20*numpy.log(numpy.abs(img_fft))
     invFFT = cv::abs(invFFT);
-    cv::minMaxLoc(invFFT,&minVal,&maxVal,NULL,NULL);
 
 //    cv::log(invFFT,logFFT);
 //    logFFT *= 20;
@@ -227,7 +259,9 @@ double ImageProvider::processImageWithFFT(Mat grayImage)
     double variance = stddev.val[0] * stddev.val[0];
     ///converting back to CV_8U
     convertScaleAbs(invFFT, invFFT);
-    this->updateImage(fftImage,QImage((uchar*)invFFT.data,invFFT.cols,invFFT.rows,invFFT.step,QImage::Format_Grayscale8));
-    emit fftImageChanged();
+    QString imageName= QFileInfo(_image_path).baseName()+"_fft";
+    this -> saveImage(imageName,invFFT);
+    //    this->updateImage(fftImage,QImage((uchar*)invFFT.data,invFFT.cols,invFFT.rows,invFFT.step,QImage::Format_Grayscale8));
+//    emit fftImageChanged();
     return roundf(variance*10000)/10000;
 }

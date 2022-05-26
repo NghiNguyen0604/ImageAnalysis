@@ -3,16 +3,17 @@
 
 #include <QObject>
 #include <QThread>
-
+#include <QCoreApplication>
 #include <QImage>
 #include <opencv2/opencv.hpp>
 #include <opencv2/imgproc.hpp>
 #include <opencv2/highgui.hpp>
 #include <QQuickImageProvider>
 #include <QMutex>
+#include <QDir>
 #include "process_image.h"
-using namespace cv;
 
+using namespace cv;
 class ImageProvider : public QObject, public QQuickImageProvider
 {
     Q_OBJECT
@@ -47,8 +48,10 @@ private:
     ProcessImage *processImage= new ProcessImage();
     QString _image_path;
     QImage rawImage,laplaceImage,fftImage,testImage;
-
+    void saveImage(QString &imageName, cv::Mat &imageData);
     QMutex mutex;
+    QDir pwd=QCoreApplication::applicationDirPath();
+//    QDir pwd= QDir::currentPath();
 };
 
 

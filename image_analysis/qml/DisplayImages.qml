@@ -14,7 +14,7 @@ Item {
         Image{
             id:imageRaw
             height:parent.height
-            width: parent.width*0.3
+            width: parent.width
             source:sourceRaw
             cache:false
             function reload(){
@@ -23,40 +23,40 @@ Item {
             }
 
         }
-        Rectangle{
-            width: parent.width*0.05
-            height: parent.height
-            color: "#3B3A3A"
-        }
-        Image{
-            id:laplaceImage
-            height:parent.height
-            width: parent.width*0.3
-            source:sourceLaplaceImage
-            cache:false
-            function reload(){
-                sourceLaplaceImage=""
-                sourceLaplaceImage="image://live/laplace"
-            }
+//        Rectangle{
+//            width: parent.width*0.05
+//            height: parent.height
+//            color: "#3B3A3A"
+//        }
+//        Image{
+//            id:laplaceImage
+//            height:parent.height
+//            width: parent.width*0.3
+//            source:sourceLaplaceImage
+//            cache:false
+//            function reload(){
+//                sourceLaplaceImage=""
+//                sourceLaplaceImage="image://live/laplace"
+//            }
 
-        }
-        Rectangle{
-            width: parent.width*0.05
-            height: parent.height
-            color: "#3B3A3A"
-        }
-        Image{
-            id:fftImage
-            height:parent.height
-            width: parent.width*0.3
-            source:sourceFFTImage
-            cache:false
-            function reload(){
-                sourceFFTImage=""
-                sourceFFTImage="image://live/fft"
-            }
+//        }
+//        Rectangle{
+//            width: parent.width*0.05
+//            height: parent.height
+//            color: "#3B3A3A"
+//        }
+//        Image{
+//            id:fftImage
+//            height:parent.height
+//            width: parent.width*0.3
+//            source:sourceFFTImage
+//            cache:false
+//            function reload(){
+//                sourceFFTImage=""
+//                sourceFFTImage="image://live/fft"
+//            }
 
-        }
+//        }
     }
 
 
@@ -71,13 +71,13 @@ Item {
             imageRaw.reload()
 
         }
-        function onLaplaceImageChanged(){
-            laplaceImage.reload()
-        }
-        function onFftImageChanged(){
-            fftImage.reload()
-            console.log("Updated fft image.")
-        }
+//        function onLaplaceImageChanged(){
+//            laplaceImage.reload()
+//        }
+//        function onFftImageChanged(){
+//            fftImage.reload()
+//            console.log("Updated fft image.")
+//        }
     }
 
 }
