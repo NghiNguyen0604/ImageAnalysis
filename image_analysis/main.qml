@@ -30,16 +30,16 @@ ApplicationWindow {
     // 3 - Information
 
     onClick_current_indexChanged: {     //Clicked Events
-        console.log("click on " + click_current_index)
-        if(click_current_index == 1){
-            bt_blur_analysis.checked = true
-            bt_info.checked=false
-        }
-        else if(click_current_index == 2){
-            bt_blur_analysis.checked=false
-            bt_info.checked = true
+//        console.log("click on " + click_current_index)
+//        if(click_current_index == 1){
+//            bt_blur_analysis.checked = true
+//            bt_info.checked=false
+//        }
+//        else if(click_current_index == 2){
+//            bt_blur_analysis.checked=false
+//            bt_info.checked = true
 
-        }
+//        }
     }
     //* progress_bar_status
     // 1 - Flash PSDK
@@ -62,101 +62,109 @@ ApplicationWindow {
             width: parent.width
             height: parent.height
             color: "#3B3A3A"
-            Row{
-                spacing: 0
+            Column{
+                spacing:0
+
                 anchors.fill: parent
-                Rectangle{                      //toolbar
-                    id: menu_bar
-                    width: parent.width*0.15
+                ///reserved
+//                Rectangle{                      //toolbar
+//                    id: menu_bar
+//                    width: parent.width
+//                    height: parent.height*0.075
+//                    color: "#171717"
+//                    Row{                 //menubar
+//                        spacing:0
+//                        width: parent.width
+//                        height: parent.height
+//                        Button_bar{
+//                            id:bt_blur_analysis
+//                            enabled: true
+//                            width: parent.width*0.1
+//                            height:parent.height
+//                            img_src_active: ""
+//                            img_src_unactive: ""
+//                            item_height: height
+//                            item_width: width
+//                            object_name: "Blurred Image Analysis"
+
+//                            onUser_click: {
+//                                click_current_index=1
+
+//                            }
+//                        }
+//                        Rectangle{
+//                            id:border_tab1
+//                            width: 1.0
+//                            height: parent.height
+//                            color: "#777777"
+//                        }
+//                        Button_bar{
+//                            id:bt_info
+//                            enabled: true
+//                            height: parent.height
+//                            width: parent.width*0.1
+//                            img_src_active: ""
+//                            img_src_unactive: ""
+//                            item_height: height
+//                            item_width: width
+//                            object_name: "Information"
+//                            onUser_click: {
+//                                click_current_index=2
+//                            }
+//                        }
+//                        Rectangle{
+//                            id:border_tab4
+//                            width: 1.0
+//                            height: parent.height
+//                            color: "#777777"
+//                        }
+//                    }
+//                }
+                //workspace
+                Row{
+                    spacing: 0
+                    width: parent.width
                     height: parent.height
-                    color: "#171717"
-                    Column{                 //menubar
-                        spacing:0
-                        width: parent.width
+                    Column{
+                        id:workspace
+                        width: parent.width*0.8
                         height: parent.height
-
-                        Button_bar{
-                            id:bt_blur_analysis
-                            enabled: true
+                        Item{
+                            height: parent.height * 0.975
                             width: parent.width
-                            height:parent.height*0.1
-                            img_src_active: ""
-                            img_src_unactive: ""
-                            item_height: height
-                            item_width: width
-                            object_name: "Blurred Image Analysis"
-
-                            onUser_click: {
-                                click_current_index=1
-
+                            Work_space_BlurAnalysis {
+                                id:workspace_BlurAnalysis
+                                visible: (click_current_index == 1) ? true : false
+                                anchors.fill: parent
+                            }
+                            Work_space_info {
+                                id:workspace_info
+                                visible: (click_current_index == 2) ? true : false
+                                anchors.fill: parent
                             }
                         }
-                        Rectangle{
-                            id:border_tab1
-                            height: 1.0
+                        Item{
+                            id: status_bar
+                            visible: true
                             width: parent.width
-                            color: "#777777"
-                        }
-                        Button_bar{
-                            id:bt_info
-                            enabled: true
-                            height: parent.height*0.1
-                            width: parent.width
-                            img_src_active: ""
-                            img_src_unactive: ""
-                            item_height: height
-                            item_width: width
-                            object_name: "Information"
-                            onUser_click: {
-                                click_current_index=2
+                            height: parent.height * 0.025
+
+                            M_Progress_Bar {
+                                id: progress
+                                anchors.fill: parent
                             }
-                        }
-                        Rectangle{
-                            id:border_tab4
-                            height: 1.0
-                            width: parent.width
-                            color: "#777777"
-                        }
-                    }
-                }
-                Column{
-                    id:workspace
-                    width: parent.width*0.65
-                    height: parent.height
-                    Item{
-                        height: parent.height * 0.975
-                        width: parent.width
-                        Work_space_BlurAnalysis {
-                            id:workspace_BlurAnalysis
-                            visible: (click_current_index == 1) ? true : false
-                            anchors.fill: parent
-                        }
-                        Work_space_info {
-                            id:workspace_info
-                            visible: (click_current_index == 2) ? true : false
-                            anchors.fill: parent
-                        }
-                    }
-                    Item{
-                        id: status_bar
-                        visible: true
-                        width: parent.width
-                        height: parent.height * 0.025
-
-                        M_Progress_Bar {
-                            id: progress
-                            anchors.fill: parent
-                        }
 
 
+                        }
                     }
-                }
-                User_area{
-                    id:user_tab
-                    width: parent.width*0.2
-                    height: parent.height
+                    User_area{
+                        id:user_tab
+                        width: parent.width*0.2
+                        height: parent.height
+                    }
                 }
             }
+
         }
     }
 
@@ -164,7 +172,7 @@ ApplicationWindow {
         id:user_dialog
         height: parent.height*0.5
         width: parent.width*0.5
-       anchors.centerIn: parent
+        anchors.centerIn: parent
     }
 
     Component.onCompleted: {

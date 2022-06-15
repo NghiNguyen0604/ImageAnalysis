@@ -2,29 +2,30 @@ import QtQuick 2.0
 import QtQuick.Controls 2.15
 Item {
     property int click_current_index_: -1
+    property double laplaceResult_:0
+    property double fftResult_:0
 
     onClick_current_index_Changed: {
 
         if(click_current_index_ == 1){
-            bt_sharpness.checked=true
+            bt_laplace_tab.checked=true
+            bt_fft_tab.checked=false
             bt_reserved.checked=false
 
         }
         else if(click_current_index_ == 2){
-            bt_sharpness.checked=false
-            bt_reserved.checked=true
+            bt_fft_tab.checked=true
+            bt_laplace_tab.checked=false
+            bt_reserved.checked=false
 
         }
         else if(click_current_index_ == 3){
-            bt_sharpness.checked=false
-            bt_reserved.checked=false
+            bt_fft_tab.checked=false
+            bt_laplace_tab.checked=false
+            bt_reserved.checked=true
 
         }
-        else if(click_current_index_ == 4){
-            bt_sharpness.checked=false
-            bt_reserved.checked=false
 
-        }
     }
 
 
@@ -91,9 +92,9 @@ Item {
                                         color: "#777777"
                                     }
                                     Button_bar{
-                                        id:bt_sharpness
+                                        id:bt_laplace_tab
                                         enabled: true
-                                        width: parent.width*0.5
+                                        width: parent.width*0.33
                                         height:parent.height
                                         img_src_active: ""
                                         img_src_unactive: ""
@@ -101,10 +102,34 @@ Item {
                                         img_height: 0
                                         item_height: height
                                         item_width: width
-                                        object_name: "Sharpness"
+                                        object_name: "Laplace"
 
                                         onUser_click: {
                                             click_current_index_=1
+
+                                        }
+                                    }
+                                    Rectangle{
+                                        id:border_tab1_
+                                        width: 1.0
+                                        height: parent.height
+                                        color: "#777777"
+                                    }
+                                    Button_bar{
+                                        id:bt_fft_tab
+                                        enabled: true
+                                        width: parent.width*0.33
+                                        height:parent.height
+                                        img_src_active: ""
+                                        img_src_unactive: ""
+                                        img_width: 0
+                                        img_height: 0
+                                        item_height: height
+                                        item_width: width
+                                        object_name: "FFT"
+
+                                        onUser_click: {
+                                            click_current_index_=2
 
                                         }
                                     }
@@ -114,12 +139,11 @@ Item {
                                         height: parent.height
                                         color: "#777777"
                                     }
-
                                     Button_bar{
                                         id:bt_reserved
                                         enabled: true
                                         height: parent.height
-                                        width: parent.width*0.5
+                                        width: parent.width*0.33
                                         img_src_active: ""
                                         img_src_unactive: ""
 
@@ -129,7 +153,7 @@ Item {
                                         item_width: width
                                         object_name: "Reserved"
                                         onUser_click: {
-                                            click_current_index_=2
+                                            click_current_index_=3
                                         }
                                     }
                                     Rectangle{
@@ -162,17 +186,51 @@ Item {
                                             id:pn_note
                                             height: parent.height*0.05
                                             width: parent.width
-                                            Text {
-                                                id: txt_not
-                                                text: qsTr("DEMO")
-                                                color: "#e8e8e8"
+                                            Row{
+                                                anchors.fill:parent
+                                                Text {
+
+                                                    text: qsTr("Variance: ")
+                                                    color: "#e8e8e8"
+                                                }
+                                                Text {
+
+                                                    text: laplaceResult_
+                                                    color: "#ffffff"
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                                Item{
+                                    id:pn_output_fft
+                                    visible: (click_current_index_==2)? true : false
+                                    anchors.fill: parent
+                                    Column{
+                                        anchors.fill: parent
+
+                                        Item{
+                                            height: parent.height*0.05
+                                            width: parent.width
+                                            Row{
+                                                anchors.fill:parent
+                                                Text {
+
+                                                    text: qsTr("Variance: ")
+                                                    color: "#e8e8e8"
+                                                }
+                                                Text {
+
+                                                    text: fftResult_
+                                                    color: "#ffffff"
+                                                }
                                             }
                                         }
                                     }
                                 }
                                 Item{
                                     id:pn_output_reserved
-                                    visible: (click_current_index_==2)? true : false
+                                    visible: (click_current_index_==3)? true : false
                                     anchors.fill: parent
                                     Column{
                                         anchors.fill: parent
@@ -210,7 +268,16 @@ Item {
     Component.onCompleted:{
         click_current_index_=1
     }
+    Connections{
+        target:imageProvider
+        ignoreUnknownSignals: true
 
+        function onResultProcess(laplaceFilterResult,fftFilterResult){
+            laplaceResult_=laplaceFilterResult
+            fftResult_=fftFilterResult
+        }
+
+    }
 
 
 }
